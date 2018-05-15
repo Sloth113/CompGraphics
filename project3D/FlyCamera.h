@@ -9,5 +9,6 @@ public:
 private:
 	float m_speed;
 	vec3 m_up;
+	glm::vec2 m_oldMousePos;
 };
 

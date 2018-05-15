@@ -1,7 +1,9 @@
 #pragma once
 
+#include "Shader.h"
 #include "Application.h"
 #include "FlyCamera.h"
+#include "Mesh.h"
 #include <glm/mat4x4.hpp>
 
 class Project : public aie::Application {
@@ -22,4 +24,8 @@ protected:
 	glm::mat4	m_projectionMatrix;
 
 	FlyCamera *	m_myCamera;
+
+	aie::ShaderProgram m_shader;
+	Mesh m_quadMesh;
+	glm::mat4 m_quadTransform;
 };

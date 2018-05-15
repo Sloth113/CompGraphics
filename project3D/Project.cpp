@@ -1,6 +1,7 @@
 #include "Project.h"
 #include "Gizmos.h"
 #include "Input.h"
+
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 
@@ -24,13 +25,48 @@ bool Project::startup() {
 	// initialise gizmo primitive counts
 	Gizmos::create(10000, 10000, 10000, 10000);
 
-	// create simple camera transforms
-	m_viewMatrix = glm::lookAt(vec3(10), vec3(0), vec3(0, 1, 0));
-	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f,
-										  getWindowWidth() / (float)getWindowHeight(),
-										  0.1f, 1000.f);
 
 	m_myCamera = new FlyCamera();
+	m_myCamera->setPerspective(glm::pi<float>() * 0.25f, getWindowWidth() / (float)getWindowHeight(), 0.1f, 1000.f);
+	m_myCamera->setLookAt(vec3(10), vec3(0), vec3(0, 1, 0));
+	/*printf("Mat\n %f,\t%f,\t%f,\t%f\n%f,\t%f,\t%f,\t%f\n%f,\t%f,\t%f,\t%f\n%f,\t%f,\t%f,\t%f\n",
+		m_myCamera->getWorldTransform()[0][0], m_myCamera->getWorldTransform()[0][1], m_myCamera->getWorldTransform()[0][2], m_myCamera->getWorldTransform()[0][3], 
+		m_myCamera->getWorldTransform()[1][0], m_myCamera->getWorldTransform()[1][1], m_myCamera->getWorldTransform()[1][2], m_myCamera->getWorldTransform()[1][3], 
+		m_myCamera->getWorldTransform()[2][0], m_myCamera->getWorldTransform()[2][1], m_myCamera->getWorldTransform()[2][2], m_myCamera->getWorldTransform()[2][3], 
+		m_myCamera->getWorldTransform()[3][0], m_myCamera->getWorldTransform()[3][1], m_myCamera->getWorldTransform()[3][2], m_myCamera->getWorldTransform()[3][3] );*/
+	
+	
+	m_shader.loadShader(aie::eShaderStage::VERTEX,	"./shaders/simple.vert");
+	m_shader.loadShader(aie::eShaderStage::FRAGMENT,"./shaders/simple.frag");
+	if (m_shader.link() == false) {
+		printf("Shader Error: %s\n", m_shader.getLastError());
+		return false;
+	}
+	
+	//m_quadMesh.initialiseQuad();
+	/*
+	// define 6 vertices for 2 triangles
+	Mesh::Vertex vertices[6];
+	vertices[0].position = { -0.5f, 0, 0.5f, 1 };
+	vertices[1].position = { 0.5f, 0, 0.5f, 1 };
+	vertices[2].position = { -0.5f, 0, -0.5f, 1 };
+	vertices[3].position = { -0.5f, 0, -0.5f, 1 };
+	vertices[4].position = { 0.5f, 0, 0.5f, 1 };
+	vertices[5].position = { 0.5f, 0, -0.5f, 1 };
+	m_quadMesh.initialise(6, vertices);	*/		// define 4 vertices for 2 triangles
+	Mesh::Vertex vertices[4];
+	vertices[0].position = { -0.5f, 0, 0.5f, 1 };
+	vertices[1].position = { 0.5f, 0, 0.5f, 1 };
+	vertices[2].position = { -0.5f, 0, -0.5f, 1 };
+	vertices[3].position = { 0.5f, 0, -0.5f, 1 };
+	unsigned int indices[6] = { 0, 1, 2, 2, 1, 3 };
+	m_quadMesh.initialise(4, vertices, 6, indices);
+
+	m_quadTransform = {
+		10,0,0,0,
+		0,10,0,0,
+		0,0,10,0,
+		0,0,0,1 };
 
 	return true;
 }
@@ -99,10 +135,17 @@ void Project::draw() {
 	clearScreen();
 
 	// update perspective in case window resized
-	m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f,
-										  getWindowWidth() / (float)getWindowHeight(),
-										  0.1f, 1000.f);
-	
+	//m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, getWindowWidth() / (float)getWindowHeight(), 0.1f, 1000.f);
+	m_myCamera->setPerspective(glm::pi<float>() * 0.25f, getWindowWidth() / (float)getWindowHeight(), 0.1f, 1000.f);
+
+	// bind shader
+	m_shader.bind();
+	 
+	auto pvm = m_myCamera->getProjectionView() * m_quadTransform;//m_projectionMatrix * m_viewMatrix * m_quadTransform;
+	m_shader.bindUniform("ProjectionViewModel", pvm);
+	// draw quad
+	m_quadMesh.draw();
+
 	Gizmos::draw(m_myCamera->getProjectionView());
 	// draw 3D gizmos
 	//Gizmos::draw(m_projectionMatrix * m_viewMatrix);
