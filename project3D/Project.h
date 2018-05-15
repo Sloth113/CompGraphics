@@ -4,6 +4,7 @@
 #include "Application.h"
 #include "FlyCamera.h"
 #include "Mesh.h"
+#include "OBJMesh.h"
 #include <glm/mat4x4.hpp>
 
 class Project : public aie::Application {
@@ -25,7 +26,11 @@ protected:
 
 	FlyCamera *	m_myCamera;
 
-	aie::ShaderProgram m_shader;
+	aie::ShaderProgram m_quadShader;
 	Mesh m_quadMesh;
 	glm::mat4 m_quadTransform;
+
+	aie::ShaderProgram m_objShader;
+	aie::OBJMesh m_objMesh;
+	glm::mat4 m_objTransform;
 };

@@ -36,10 +36,10 @@ bool Project::startup() {
 		m_myCamera->getWorldTransform()[3][0], m_myCamera->getWorldTransform()[3][1], m_myCamera->getWorldTransform()[3][2], m_myCamera->getWorldTransform()[3][3] );*/
 	
 	
-	m_shader.loadShader(aie::eShaderStage::VERTEX,	"./shaders/simple.vert");
-	m_shader.loadShader(aie::eShaderStage::FRAGMENT,"./shaders/simple.frag");
-	if (m_shader.link() == false) {
-		printf("Shader Error: %s\n", m_shader.getLastError());
+	m_quadShader.loadShader(aie::eShaderStage::VERTEX,	"./shaders/simple.vert");
+	m_quadShader.loadShader(aie::eShaderStage::FRAGMENT,"./shaders/simple.frag");
+	if (m_quadShader.link() == false) {
+		printf("Shader Error: %s\n", m_quadShader.getLastError());
 		return false;
 	}
 	
@@ -53,20 +53,45 @@ bool Project::startup() {
 	vertices[3].position = { -0.5f, 0, -0.5f, 1 };
 	vertices[4].position = { 0.5f, 0, 0.5f, 1 };
 	vertices[5].position = { 0.5f, 0, -0.5f, 1 };
-	m_quadMesh.initialise(6, vertices);	*/		// define 4 vertices for 2 triangles
+	m_quadMesh.initialise(6, vertices);
+	*/
+	
+	// define 4 vertices for 2 triangles
 	Mesh::Vertex vertices[4];
 	vertices[0].position = { -0.5f, 0, 0.5f, 1 };
 	vertices[1].position = { 0.5f, 0, 0.5f, 1 };
 	vertices[2].position = { -0.5f, 0, -0.5f, 1 };
 	vertices[3].position = { 0.5f, 0, -0.5f, 1 };
 	unsigned int indices[6] = { 0, 1, 2, 2, 1, 3 };
-	m_quadMesh.initialise(4, vertices, 6, indices);
+	m_quadMesh.initialise(4, vertices, 6, indices);
+
 
 	m_quadTransform = {
 		10,0,0,0,
 		0,10,0,0,
 		0,0,10,0,
-		0,0,0,1 };
+		0,0,0,1 
+	};
+
+	m_objShader.loadShader(aie::eShaderStage::VERTEX,"./shaders/simple.vert");
+	m_objShader.loadShader(aie::eShaderStage::FRAGMENT,"./shaders/simple.frag");
+	
+	if (m_objShader.link() == false) {
+		printf("Shader Error: %s\n", m_objShader.getLastError());
+		return false;
+	}
+	if (m_objMesh.load("./models/Bunny.obj") == false) {
+		printf("Bunny Mesh Error!\n");
+		return false;
+	}
+	m_objTransform = {
+		0.5f,0,0,0,
+		0,0.5f,0,0,
+		0,0,0.5f,0,
+		0,0,0,1
+	};
+
+
 
 	return true;
 }
@@ -139,12 +164,19 @@ void Project::draw() {
 	m_myCamera->setPerspective(glm::pi<float>() * 0.25f, getWindowWidth() / (float)getWindowHeight(), 0.1f, 1000.f);
 
 	// bind shader
-	m_shader.bind();
+	m_quadShader.bind();
 	 
 	auto pvm = m_myCamera->getProjectionView() * m_quadTransform;//m_projectionMatrix * m_viewMatrix * m_quadTransform;
-	m_shader.bindUniform("ProjectionViewModel", pvm);
+	m_quadShader.bindUniform("ProjectionViewModel", pvm);
 	// draw quad
-	m_quadMesh.draw();
+	m_quadMesh.draw();
+
+	// bind shader
+	m_objShader.bind();
+	// bind transform
+	auto objPvm = m_myCamera->getProjectionView() * m_objTransform;
+	m_objShader.bindUniform("ProjectionViewModel", objPvm);
+	m_objMesh.draw();
 
 	Gizmos::draw(m_myCamera->getProjectionView());
 	// draw 3D gizmos

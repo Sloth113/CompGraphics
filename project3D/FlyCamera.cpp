@@ -52,8 +52,20 @@ void FlyCamera::update(float deltaTime)
 		glm::vec2 newMPos = glm::vec2(input->getMouseX(), input->getMouseY());
 		if (m_oldMousePos != glm::vec2(-1, -1)) {
 			glm::vec2 change =   newMPos- m_oldMousePos;
-			m_worldTransform = glm::rotate(m_worldTransform, (-change.x * deltaTime)/180 * glm::pi<float>() * m_speed, vec3(0, 1, 0));
-			m_worldTransform = glm::rotate(m_worldTransform, (change.y * deltaTime) /180 * glm::pi<float>() * m_speed, vec3(1, 0, 0));
+			float xangle = (change.y * deltaTime) / 180 * glm::pi<float>() * m_speed;
+			float yangle = -(change.x * deltaTime) / 180 * glm::pi<float>() * m_speed;
+			//Fine ill do it myself 
+			//Rotate world y
+			glm::mat4 rotYMat = {
+				glm::cos(yangle),	0.f,	-glm::sin(yangle),	0.f,
+				0.f,				1.f,	0.f,				0.f,
+				glm::sin(yangle),	0.f,	glm::cos(yangle),	0.f,
+				0.f,				0.f,	0.f,				1.f
+			};
+			m_worldTransform = rotYMat*m_worldTransform;
+
+			m_worldTransform = glm::rotate(m_worldTransform, xangle, vec3(1, 0, 0));
+			
 		}
 		m_oldMousePos = newMPos;
 
