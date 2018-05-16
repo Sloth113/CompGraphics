@@ -35,13 +35,14 @@ bool Project::startup() {
 		m_myCamera->getWorldTransform()[2][0], m_myCamera->getWorldTransform()[2][1], m_myCamera->getWorldTransform()[2][2], m_myCamera->getWorldTransform()[2][3], 
 		m_myCamera->getWorldTransform()[3][0], m_myCamera->getWorldTransform()[3][1], m_myCamera->getWorldTransform()[3][2], m_myCamera->getWorldTransform()[3][3] );*/
 	
-	
+	/*	
 	m_quadShader.loadShader(aie::eShaderStage::VERTEX,	"./shaders/simple.vert");
 	m_quadShader.loadShader(aie::eShaderStage::FRAGMENT,"./shaders/simple.frag");
 	if (m_quadShader.link() == false) {
 		printf("Shader Error: %s\n", m_quadShader.getLastError());
 		return false;
 	}
+	
 	
 	//m_quadMesh.initialiseQuad();
 	/*
@@ -56,6 +57,7 @@ bool Project::startup() {
 	m_quadMesh.initialise(6, vertices);
 	*/
 	
+	/*/
 	// define 4 vertices for 2 triangles
 	Mesh::Vertex vertices[4];
 	vertices[0].position = { -0.5f, 0, 0.5f, 1 };
@@ -72,7 +74,9 @@ bool Project::startup() {
 		0,0,10,0,
 		0,0,0,1 
 	};
+	*/
 
+	/*
 	m_objShader.loadShader(aie::eShaderStage::VERTEX,"./shaders/simple.vert");
 	m_objShader.loadShader(aie::eShaderStage::FRAGMENT,"./shaders/simple.frag");
 	
@@ -83,14 +87,49 @@ bool Project::startup() {
 	if (m_objMesh.load("./models/Bunny.obj") == false) {
 		printf("Bunny Mesh Error!\n");
 		return false;
-	}
+	}
+
 	m_objTransform = {
 		0.5f,0,0,0,
 		0,0.5f,0,0,
 		0,0,0.5f,0,
 		0,0,0,1
-	};
+	};
+	*/
 
+	m_scene = new Object*[3];
+
+
+	mat4 transform = {
+		0.5f,0,0,0,
+		0,0.5f,0,0,
+		0,0,0.5f,0,
+		0,0,0,1
+	};
+
+	m_scene[0] = new Object(transform);
+	transform = glm::translate(transform, glm::vec3(3, 0, 0));
+	m_scene[1] = new Object(transform);
+	transform = glm::translate(transform, glm::vec3(3, 0, 0));
+	m_scene[2] = new Object(transform);
+
+	//m_scene[1]->SetMesh(m_scene[0]->GetMesh());
+	//m_scene[2]->SetMesh(m_scene[0]->GetMesh());
+
+
+	for (int i = 0; i < 3; i++) {
+		if (m_scene[i]->LoadShader(aie::eShaderStage::VERTEX, "./shaders/simple.vert") == false) {
+			return false;
+		}
+		if (m_scene[i]->LoadShader(aie::eShaderStage::FRAGMENT, "./shaders/simple.frag") == false) {
+			return false;
+		}
+		printf("Loading Mesh\n");
+		if (m_scene[i]->LoadMesh("./models/Bunny.obj") == false) {
+			return false;
+		}
+	}
+	
 
 
 	return true;
@@ -98,6 +137,7 @@ bool Project::startup() {
 
 void Project::shutdown() {
 	delete m_myCamera;
+	delete[] m_scene;
 	Gizmos::destroy();
 }
 
@@ -163,20 +203,25 @@ void Project::draw() {
 	//m_projectionMatrix = glm::perspective(glm::pi<float>() * 0.25f, getWindowWidth() / (float)getWindowHeight(), 0.1f, 1000.f);
 	m_myCamera->setPerspective(glm::pi<float>() * 0.25f, getWindowWidth() / (float)getWindowHeight(), 0.1f, 1000.f);
 
+	/*
 	// bind shader
 	m_quadShader.bind();
-	 
 	auto pvm = m_myCamera->getProjectionView() * m_quadTransform;//m_projectionMatrix * m_viewMatrix * m_quadTransform;
 	m_quadShader.bindUniform("ProjectionViewModel", pvm);
 	// draw quad
 	m_quadMesh.draw();
-
+	*/
+	/*
 	// bind shader
 	m_objShader.bind();
 	// bind transform
 	auto objPvm = m_myCamera->getProjectionView() * m_objTransform;
-	m_objShader.bindUniform("ProjectionViewModel", objPvm);
+	m_objShader.bindUniform("ProjectionViewModel", objPvm);
+
 	m_objMesh.draw();
+	*/
+	for(int i = 0; i < 3; i++)
+		m_scene[i]->Draw(m_myCamera->getProjectionView());
 
 	Gizmos::draw(m_myCamera->getProjectionView());
 	// draw 3D gizmos
