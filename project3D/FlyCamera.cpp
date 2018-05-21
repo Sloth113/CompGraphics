@@ -41,11 +41,17 @@ void FlyCamera::update(float deltaTime)
 		right = m_worldTransform * right;
 		newPos += vec3(right) * m_speed * deltaTime;
 	}
+	//up and down
 	if (input->isKeyDown(aie::INPUT_KEY_SPACE)) {
-		newPos += vec3(0, m_speed * deltaTime, 0);
+
+		glm::vec4 up = glm::vec4(0, 1, 0, 0);
+		up = m_worldTransform * up;
+		newPos += vec3(up) * m_speed * deltaTime;
 	}
 	if (input->isKeyDown(aie::INPUT_KEY_LEFT_CONTROL)) {
-		newPos += vec3(0, -m_speed * deltaTime, 0);
+		glm::vec4 down = glm::vec4(0, -1, 0, 0);
+		down = m_worldTransform * down;
+		newPos += vec3(down) * m_speed * deltaTime;
 	}
 
 	if (input->isMouseButtonDown(aie::INPUT_MOUSE_BUTTON_LEFT)) {
@@ -62,7 +68,7 @@ void FlyCamera::update(float deltaTime)
 				glm::sin(yangle),	0.f,	glm::cos(yangle),	0.f,
 				0.f,				0.f,	0.f,				1.f
 			};
-			m_worldTransform = rotYMat*m_worldTransform;
+			m_worldTransform = rotYMat * m_worldTransform;
 
 			m_worldTransform = glm::rotate(m_worldTransform, xangle, vec3(1, 0, 0));
 			

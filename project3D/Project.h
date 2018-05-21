@@ -8,6 +8,7 @@
 #include "OBJMesh.h"
 #include "Object.h"
 #include <glm/mat4x4.hpp>
+#include <vector>
 
 class Project : public aie::Application {
 public:
@@ -20,6 +21,7 @@ public:
 
 	virtual void update(float deltaTime);
 	virtual void draw();
+	bool LoadShader(aie::ShaderProgram * shader,  aie::eShaderStage stage, char* path);
 
 protected:
 
@@ -28,13 +30,20 @@ protected:
 
 	FlyCamera *	m_myCamera;
 
-	Object ** m_scene;
+	std::vector<Object *> m_scene;
+	std::vector<aie::OBJMesh *> m_meshs;
+	std::vector<Mesh *> m_shapes;
+	std::vector<aie::Texture *> m_textures;
+	std::vector<aie::ShaderProgram *> m_shaders;
 
-	aie::ShaderProgram m_quadShader;
-	Mesh m_quadMesh;
-	glm::mat4 m_quadTransform;
 
-	aie::ShaderProgram m_objShader;
-	aie::OBJMesh m_objMesh;
-	glm::mat4 m_objTransform;
+	struct Light {
+		glm::vec3 direction;
+	};
+
+	struct SceneDet {
+		Light * lights;
+		Camera * m_camera;
+	};
+	Light m_light;
 };

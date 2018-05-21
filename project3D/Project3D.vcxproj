@@ -170,6 +170,7 @@
     <ClCompile Include="OBJMesh.cpp" />
     <ClCompile Include="Project.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -179,12 +180,19 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="OBJMesh.h" />
     <ClInclude Include="Project.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="tiny_obj_loader.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\bin\shaders\normalmap.frag" />
+    <None Include="..\bin\shaders\normalmap.vert" />
+    <None Include="..\bin\shaders\phong.frag" />
+    <None Include="..\bin\shaders\phong.vert" />
     <None Include="..\bin\shaders\simple.frag" />
     <None Include="..\bin\shaders\simple.vert" />
+    <None Include="..\bin\shaders\textured.frag" />
+    <None Include="..\bin\shaders\textured.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
