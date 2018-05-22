@@ -19,8 +19,9 @@ Project::~Project() {
 }
 
 bool Project::startup() {
-	
-	setBackgroundColour(0.25f, 0.25f, 0.25f);
+
+	//setBackgroundColour(0.25f, 0.25f, 0.25f);
+	setBackgroundColour(0, 0, 0);
 
 	// initialise gizmo primitive counts
 	Gizmos::create(10000, 10000, 10000, 10000);
@@ -29,77 +30,84 @@ bool Project::startup() {
 	m_myCamera = new FlyCamera();
 	m_myCamera->setPerspective(glm::pi<float>() * 0.25f, getWindowWidth() / (float)getWindowHeight(), 0.1f, 1000.f);
 	m_myCamera->setLookAt(vec3(10), vec3(0), vec3(0, 1, 0));
+
+	m_data.light.direction = { 1,1,0 };
+	m_data.light.diffuse = { 1, 1, 1 };
+	m_data.light.specular = { 1, 1, 1 };
+	m_data.ambLight = { 0.25f, 0.25f, 0.25f };
+	
+	m_data.camera = m_myCamera;
 	/*printf("Mat\n %f,\t%f,\t%f,\t%f\n%f,\t%f,\t%f,\t%f\n%f,\t%f,\t%f,\t%f\n%f,\t%f,\t%f,\t%f\n",
-		m_myCamera->getWorldTransform()[0][0], m_myCamera->getWorldTransform()[0][1], m_myCamera->getWorldTransform()[0][2], m_myCamera->getWorldTransform()[0][3], 
-		m_myCamera->getWorldTransform()[1][0], m_myCamera->getWorldTransform()[1][1], m_myCamera->getWorldTransform()[1][2], m_myCamera->getWorldTransform()[1][3], 
-		m_myCamera->getWorldTransform()[2][0], m_myCamera->getWorldTransform()[2][1], m_myCamera->getWorldTransform()[2][2], m_myCamera->getWorldTransform()[2][3], 
+		m_myCamera->getWorldTransform()[0][0], m_myCamera->getWorldTransform()[0][1], m_myCamera->getWorldTransform()[0][2], m_myCamera->getWorldTransform()[0][3],
+		m_myCamera->getWorldTransform()[1][0], m_myCamera->getWorldTransform()[1][1], m_myCamera->getWorldTransform()[1][2], m_myCamera->getWorldTransform()[1][3],
+		m_myCamera->getWorldTransform()[2][0], m_myCamera->getWorldTransform()[2][1], m_myCamera->getWorldTransform()[2][2], m_myCamera->getWorldTransform()[2][3],
 		m_myCamera->getWorldTransform()[3][0], m_myCamera->getWorldTransform()[3][1], m_myCamera->getWorldTransform()[3][2], m_myCamera->getWorldTransform()[3][3] );*/
-	
-	/*	
-	m_quadShader.loadShader(aie::eShaderStage::VERTEX,	"./shaders/simple.vert");
-	m_quadShader.loadShader(aie::eShaderStage::FRAGMENT,"./shaders/simple.frag");
-	if (m_quadShader.link() == false) {
-		printf("Shader Error: %s\n", m_quadShader.getLastError());
-		return false;
-	}
-	
-	
-	//m_quadMesh.initialiseQuad();
-	/*
-	// define 6 vertices for 2 triangles
-	Mesh::Vertex vertices[6];
-	vertices[0].position = { -0.5f, 0, 0.5f, 1 };
-	vertices[1].position = { 0.5f, 0, 0.5f, 1 };
-	vertices[2].position = { -0.5f, 0, -0.5f, 1 };
-	vertices[3].position = { -0.5f, 0, -0.5f, 1 };
-	vertices[4].position = { 0.5f, 0, 0.5f, 1 };
-	vertices[5].position = { 0.5f, 0, -0.5f, 1 };
-	m_quadMesh.initialise(6, vertices);
-	*/
-	
-	/*/
-	// define 4 vertices for 2 triangles
-	Mesh::Vertex vertices[4];
-	vertices[0].position = { -0.5f, 0, 0.5f, 1 };
-	vertices[1].position = { 0.5f, 0, 0.5f, 1 };
-	vertices[2].position = { -0.5f, 0, -0.5f, 1 };
-	vertices[3].position = { 0.5f, 0, -0.5f, 1 };
-	unsigned int indices[6] = { 0, 1, 2, 2, 1, 3 };
-	m_quadMesh.initialise(4, vertices, 6, indices);
+
+		/*
+		m_quadShader.loadShader(aie::eShaderStage::VERTEX,	"./shaders/simple.vert");
+		m_quadShader.loadShader(aie::eShaderStage::FRAGMENT,"./shaders/simple.frag");
+		if (m_quadShader.link() == false) {
+			printf("Shader Error: %s\n", m_quadShader.getLastError());
+			return false;
+		}
 
 
-	m_quadTransform = {
-		10,0,0,0,
-		0,10,0,0,
-		0,0,10,0,
-		0,0,0,1 
-	};
-	*/
+		//m_quadMesh.initialiseQuad();
+		/*
+		// define 6 vertices for 2 triangles
+		Mesh::Vertex vertices[6];
+		vertices[0].position = { -0.5f, 0, 0.5f, 1 };
+		vertices[1].position = { 0.5f, 0, 0.5f, 1 };
+		vertices[2].position = { -0.5f, 0, -0.5f, 1 };
+		vertices[3].position = { -0.5f, 0, -0.5f, 1 };
+		vertices[4].position = { 0.5f, 0, 0.5f, 1 };
+		vertices[5].position = { 0.5f, 0, -0.5f, 1 };
+		m_quadMesh.initialise(6, vertices);
+		*/
 
-	/*
-	m_objShader.loadShader(aie::eShaderStage::VERTEX,"./shaders/simple.vert");
-	m_objShader.loadShader(aie::eShaderStage::FRAGMENT,"./shaders/simple.frag");
-	
-	if (m_objShader.link() == false) {
-		printf("Shader Error: %s\n", m_objShader.getLastError());
-		return false;
-	}
-	if (m_objMesh.load("./models/Bunny.obj") == false) {
-		printf("Bunny Mesh Error!\n");
-		return false;
-	}
+		/*/
+		// define 4 vertices for 2 triangles
+		Mesh::Vertex vertices[4];
+		vertices[0].position = { -0.5f, 0, 0.5f, 1 };
+		vertices[1].position = { 0.5f, 0, 0.5f, 1 };
+		vertices[2].position = { -0.5f, 0, -0.5f, 1 };
+		vertices[3].position = { 0.5f, 0, -0.5f, 1 };
+		unsigned int indices[6] = { 0, 1, 2, 2, 1, 3 };
+		m_quadMesh.initialise(4, vertices, 6, indices);
 
-	m_objTransform = {
-		0.5f,0,0,0,
-		0,0.5f,0,0,
-		0,0,0.5f,0,
-		0,0,0,1
-	};
-	*/
+
+		m_quadTransform = {
+			10,0,0,0,
+			0,10,0,0,
+			0,0,10,0,
+			0,0,0,1
+		};
+		*/
+
+		/*
+		m_objShader.loadShader(aie::eShaderStage::VERTEX,"./shaders/simple.vert");
+		m_objShader.loadShader(aie::eShaderStage::FRAGMENT,"./shaders/simple.frag");
+
+		if (m_objShader.link() == false) {
+			printf("Shader Error: %s\n", m_objShader.getLastError());
+			return false;
+		}
+		if (m_objMesh.load("./models/Bunny.obj") == false) {
+			printf("Bunny Mesh Error!\n");
+			return false;
+		}
+
+		m_objTransform = {
+			0.5f,0,0,0,
+			0,0.5f,0,0,
+			0,0,0.5f,0,
+			0,0,0,1
+		};
+		*/
 
 	m_scene = std::vector<Object*>();
-	m_meshs =  std::vector<aie::OBJMesh*>();
-	m_shapes =  std::vector<Mesh*>();
+	m_meshs = std::vector<aie::OBJMesh*>();
+	m_shapes = std::vector<Mesh*>();
 	m_textures = std::vector<aie::Texture*>();
 	m_shaders = std::vector<aie::ShaderProgram *>();
 
@@ -141,14 +149,13 @@ bool Project::startup() {
 
 	//Shaders
 	m_shaders.push_back(new aie::ShaderProgram());
-	//Simple
+	//Simple [0]
 	if (LoadShader(m_shaders.back(), aie::eShaderStage::VERTEX, "./shaders/simple.vert") == false)
 		return false;
 	if (LoadShader(m_shaders.back(), aie::eShaderStage::FRAGMENT, "./shaders/simple.frag") == false)
 		return false;
 
-
-	//Textured
+	//Textured [1]
 	m_shaders.push_back(new aie::ShaderProgram());
 	if (LoadShader(m_shaders.back(), aie::eShaderStage::VERTEX, "./shaders/textured.vert") == false) {
 		return false;
@@ -157,15 +164,32 @@ bool Project::startup() {
 		return false;
 	}
 
-	//normal 
+	//normal [2]
 	m_shaders.push_back(new aie::ShaderProgram());
 	if (LoadShader(m_shaders.back(), aie::eShaderStage::VERTEX, "./shaders/normalmap.vert") == false) {
-	return false;
+		return false;
 	}
 	if (LoadShader(m_shaders.back(), aie::eShaderStage::FRAGMENT, "./shaders/normalmap.frag") == false) {
-	return false;
+		return false;
 	}
-	
+	//Phong [3]
+	m_shaders.push_back(new aie::ShaderProgram());
+	if (LoadShader(m_shaders.back(), aie::eShaderStage::VERTEX, "./shaders/phong.vert") == false) {
+		return false;
+	}
+	if (LoadShader(m_shaders.back(), aie::eShaderStage::FRAGMENT, "./shaders/phong.frag") == false) {
+		return false;
+	}
+	//NormalMap [4]
+	m_shaders.push_back(new aie::ShaderProgram());
+	if (LoadShader(m_shaders.back(), aie::eShaderStage::VERTEX, "./shaders/normalmap.vert") == false) {
+		return false;
+	}
+	if (LoadShader(m_shaders.back(), aie::eShaderStage::FRAGMENT, "./shaders/normalmap.frag") == false) {
+		return false;
+	}
+
+
 
 
 
@@ -176,11 +200,11 @@ bool Project::startup() {
 		0,0,0.5f,0,
 		0,0,0,1
 	};
-	
+
 	//bunny
-	transform = glm::translate(transform, glm::vec3(10, 0, 10));
+	transform = glm::translate(transform, glm::vec3(0, 0, 10));
 	m_scene.push_back(new Object(transform));
-	m_scene.back()->SetShader(m_shaders[0]);
+	m_scene.back()->SetShader(m_shaders[3]);
 	m_scene.back()->SetMesh(m_meshs[0]);
 
 	//Spear
@@ -191,7 +215,7 @@ bool Project::startup() {
 		0,0,0,1
 	};
 	m_scene.push_back(new Object(sprTrans));
-	m_scene.back()->SetShader(m_shaders[1]);
+	m_scene.back()->SetShader(m_shaders[3]);
 	m_scene.back()->SetMesh(m_meshs[1]);
 
 	//Square
@@ -201,19 +225,18 @@ bool Project::startup() {
 		0,0,10.f,0,
 		0,0,0,1
 	};
-	
+
 	m_scene.push_back(new Object(sqrTrans));
 	m_scene.back()->SetMesh(m_shapes[0]);
 	m_scene.back()->SetTexture(m_textures[0]);
-	m_scene.back()->SetShader(m_shaders[1]);
-	
+	m_scene.back()->SetShader(m_shaders[3]);
+
 	//Dragon
 	transform = glm::translate(transform, glm::vec3(0, 0, 10));
 	m_scene.push_back(new Object(transform));
 	m_scene.back()->SetMesh(m_meshs[2]);
-	m_scene.back()->SetShader(m_shaders[0]);
+	m_scene.back()->SetShader(m_shaders[3]);
 
-	
 
 
 	return true;
@@ -258,10 +281,10 @@ void Project::update(float deltaTime) {
 	for (int i = 0; i < 21; ++i) {
 		Gizmos::addLine(vec3(-10 + i, 0, 10),
 						vec3(-10 + i, 0, -10),
-						i == 10 ? white : black);
+						white);
 		Gizmos::addLine(vec3(10, 0, -10 + i),
 						vec3(-10, 0, -10 + i),
-						i == 10 ? white : black);
+						white);
 	}
 
 	// add a transform so that we can see the axis
@@ -290,8 +313,7 @@ void Project::update(float deltaTime) {
 
 	
 	// rotate light
-	m_light.direction = glm::normalize(vec3(glm::cos(time * 2),
-		glm::sin(time * 2), 0));
+	m_data.light.direction = glm::normalize(vec3(glm::cos(time * 2),	glm::sin(time * 2), glm::sin(time * 0.5f)));
 
 	aie::Input* input = aie::Input::getInstance();
 	
@@ -330,10 +352,15 @@ void Project::draw() {
 	m_objMesh.draw();
 	*/
 	
+	//Update camera
+	//m_data.camProjectionView = m_myCamera->getProjectionView();
 	
+
+
 	for (Object * ob : m_scene) {
 		
-		ob->Draw(m_myCamera->getProjectionView());
+		//ob->Draw(m_myCamera->getProjectionView());
+		ob->Draw(m_data);
 
 	}
 

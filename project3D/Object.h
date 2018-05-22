@@ -2,6 +2,20 @@
 #include "Shader.h"
 #include "OBJMesh.h"
 #include "Mesh.h"
+#include "FlyCamera.h"
+
+struct Light {
+	glm::vec3 direction;
+	glm::vec3 diffuse;
+	glm::vec3 specular;
+};
+
+struct SceneData {
+	Light light;
+	glm::vec3 ambLight;
+	FlyCamera * camera;
+};
+
 class Object
 {
 public:
@@ -12,6 +26,7 @@ public:
 	bool SetMesh(Mesh * mesh);
 	bool SetTexture(aie::Texture * texture);
 	void Draw(glm::mat4 cameraProjectionView);
+	void Draw(SceneData scene);
 
 private:
 	

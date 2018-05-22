@@ -17,6 +17,7 @@ class Camera {
 		void setPerspective(float fieldOfView, float aspectRatio, float near, float far);
 		void setLookAt(vec3 from, vec3 to, vec3 up);
 		void setPosition(vec3 position);
+		vec3 getPosition();
 		mat4 getWorldTransform();
 		mat4 getProjection();
 		mat4 getProjectionView();

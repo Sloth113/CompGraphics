@@ -2,7 +2,7 @@
 
 #include "Shader.h"
 #include "Application.h"
-#include "FlyCamera.h"
+//#include "FlyCamera.h"
 #include "Mesh.h"
 #include "Texture.h"
 #include "OBJMesh.h"
@@ -36,14 +36,6 @@ protected:
 	std::vector<aie::Texture *> m_textures;
 	std::vector<aie::ShaderProgram *> m_shaders;
 
-
-	struct Light {
-		glm::vec3 direction;
-	};
-
-	struct SceneDet {
-		Light * lights;
-		Camera * m_camera;
-	};
-	Light m_light;
+	SceneData m_data;
+	//Light m_light;
 };

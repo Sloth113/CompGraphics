@@ -42,6 +42,11 @@ void Camera::setPosition(vec3 position)
 	updateProjectionViewTransform();
 }
 
+vec3 Camera::getPosition()
+{
+	return m_worldTransform[3];
+}
+
 mat4 Camera::getWorldTransform()
 {
 	return m_worldTransform;
