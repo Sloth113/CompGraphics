@@ -9,6 +9,7 @@
 #include "Object.h"
 #include <glm/mat4x4.hpp>
 #include <vector>
+#include <../dependencies/imgui/imgui.h>
 
 class Project : public aie::Application {
 public:
@@ -37,5 +38,8 @@ protected:
 	std::vector<aie::ShaderProgram *> m_shaders;
 
 	SceneData m_data;
+
+	bool m_test;
+	float m_float;
 	//Light m_light;
 };

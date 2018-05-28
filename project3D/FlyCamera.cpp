@@ -54,7 +54,7 @@ void FlyCamera::update(float deltaTime)
 		newPos += vec3(down) * m_speed * deltaTime;
 	}
 
-	if (input->isMouseButtonDown(aie::INPUT_MOUSE_BUTTON_LEFT)) {
+	if (input->isMouseButtonDown(aie::INPUT_MOUSE_BUTTON_RIGHT)) {
 		glm::vec2 newMPos = glm::vec2(input->getMouseX(), input->getMouseY());
 		if (m_oldMousePos != glm::vec2(-1, -1)) {
 			glm::vec2 change =   newMPos- m_oldMousePos;

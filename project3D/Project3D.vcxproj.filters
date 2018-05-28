@@ -45,6 +45,9 @@
     <ClCompile Include="Scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Project.h">
@@ -74,6 +77,9 @@
     <ClInclude Include="Scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="RenderTarget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\bin\shaders\simple.frag">
@@ -98,6 +104,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="..\bin\shaders\phong.vert">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\bin\shaders\BRDF.frag">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="..\bin\shaders\BRDF.vert">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

@@ -31,7 +31,7 @@ bool Project::startup() {
 	m_myCamera->setPerspective(glm::pi<float>() * 0.25f, getWindowWidth() / (float)getWindowHeight(), 0.1f, 1000.f);
 	m_myCamera->setLookAt(vec3(10), vec3(0), vec3(0, 1, 0));
 
-	m_data.light.direction = { 1,1,0 };
+	m_data.light.direction = { 1,1,1};
 	m_data.light.diffuse = { 1, 1, 1 };
 	m_data.light.specular = { 1, 1, 1 };
 	m_data.ambLight = { 0.25f, 0.25f, 0.25f };
@@ -127,16 +127,19 @@ bool Project::startup() {
 
 	//Load meshs 
 	printf("Loading Mesh\n");
+	//Bunny [0]
 	m_meshs.push_back(new aie::OBJMesh());
-	if (m_meshs.back()->load("./models/Bunny.obj") == false) {
+	if (m_meshs.back()->load("./models/Bunny.obj", true) == false) {
 		return false;
 	}
 	m_meshs.push_back(new aie::OBJMesh());
+	//Soul Spear Textured [1]
 	if (m_meshs.back()->load("./models/soulspear/soulspear.obj", true, true) == false) {
 		return false;
 	}
 	m_meshs.push_back(new aie::OBJMesh());
-	if (m_meshs.back()->load("./models/Dragon.obj") == false) {
+	//Dragon [2]
+	if (m_meshs.back()->load("./models/Dragon.obj", true, true) == false) {
 		return false;
 	}
 
@@ -180,12 +183,12 @@ bool Project::startup() {
 	if (LoadShader(m_shaders.back(), aie::eShaderStage::FRAGMENT, "./shaders/phong.frag") == false) {
 		return false;
 	}
-	//NormalMap [4]
+	//BRDF Physical shaders [4]
 	m_shaders.push_back(new aie::ShaderProgram());
-	if (LoadShader(m_shaders.back(), aie::eShaderStage::VERTEX, "./shaders/normalmap.vert") == false) {
+	if (LoadShader(m_shaders.back(), aie::eShaderStage::VERTEX, "./shaders/BRDF.vert") == false) {
 		return false;
 	}
-	if (LoadShader(m_shaders.back(), aie::eShaderStage::FRAGMENT, "./shaders/normalmap.frag") == false) {
+	if (LoadShader(m_shaders.back(), aie::eShaderStage::FRAGMENT, "./shaders/BRDF.frag") == false) {
 		return false;
 	}
 
@@ -216,6 +219,28 @@ bool Project::startup() {
 	};
 	m_scene.push_back(new Object(sprTrans));
 	m_scene.back()->SetShader(m_shaders[3]);
+	m_scene.back()->SetMesh(m_meshs[1]);
+
+	//Spear2
+	mat4 spr2Trans = {
+		1.f,0,0,0,
+		0,1.f,0,0,
+		0,0,1.f,0,
+		-5,0,-5,1
+	};
+	m_scene.push_back(new Object(spr2Trans));
+	m_scene.back()->SetShader(m_shaders[2]);
+	m_scene.back()->SetMesh(m_meshs[1]);
+
+	//Spear3
+	mat4 spr3Trans = {
+		1.f,0,0,0,
+		0,1.f,0,0,
+		0,0,1.f,0,
+		4.8f,0,-4.8f,1
+	};
+	m_scene.push_back(new Object(spr3Trans));
+	m_scene.back()->SetShader(m_shaders[4]);
 	m_scene.back()->SetMesh(m_meshs[1]);
 
 	//Square
@@ -313,7 +338,7 @@ void Project::update(float deltaTime) {
 
 	
 	// rotate light
-	m_data.light.direction = glm::normalize(vec3(glm::cos(time * 2),	glm::sin(time * 2), glm::sin(time * 0.5f)));
+	//m_data.light.direction = glm::normalize(vec3(glm::cos(time * 2),	glm::sin(time * 2), glm::sin(time * 0.5f)));
 
 	aie::Input* input = aie::Input::getInstance();
 	
@@ -355,6 +380,17 @@ void Project::draw() {
 	//Update camera
 	//m_data.camProjectionView = m_myCamera->getProjectionView();
 	
+	ImGui::Begin("Lighting");
+	ImGui::Checkbox("Test", &m_test);
+	ImGui::SliderFloat3("Light", glm::value_ptr(m_data.light.direction), -1, 1);
+	ImGui::ColorEdit3("AmbLight", &(m_data.ambLight.x));
+	ImGui::End();
+
+	ImGui::Begin("Physical Spear [A8]");
+	ImGui::SliderFloat("Roughness", (m_scene[3]->GetRoughness()), 0, 1.0f);
+	ImGui::SliderFloat("Reflection", (m_scene[3]->GetReflection()), 0, 1.0f);
+	ImGui::End();
+
 
 
 	for (Object * ob : m_scene) {

@@ -45,7 +45,7 @@ void main() {
 	
 	
 	//Colour?
-	vec3 ambient = Ia * Ka;   //?Doesnt work????>? 
+	vec3 ambient = Ia * Ka * diffColour;    
 	vec3 diffuse = Id * Kd * lambertTerm * diffColour ;
 	vec3 specular = Is * Ks * specularTerm * specColour;
 

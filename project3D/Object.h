@@ -19,11 +19,13 @@ struct SceneData {
 class Object
 {
 public:
-	Object(glm::mat4 transform);
+	Object(glm::mat4 transform, float roughness = 0, float reflectCoef = 1);
 	~Object();
 	bool SetShader(aie::ShaderProgram * shader);
 	bool SetMesh(aie::OBJMesh * mesh);
 	bool SetMesh(Mesh * mesh);
+	float* GetRoughness();
+	float* GetReflection();
 	bool SetTexture(aie::Texture * texture);
 	void Draw(glm::mat4 cameraProjectionView);
 	void Draw(SceneData scene);
@@ -35,5 +37,13 @@ private:
 	Mesh * m_shape;
 	glm::mat4 m_transform;
 	aie::Texture * m_texture;
+
+	glm::vec3 m_diffuse;
+	glm::vec3 m_specular;
+	float m_specPower;
+	glm::vec3 m_ambLight;
+	float m_roughness;
+	float m_reflectionCoef;
+
 };
 

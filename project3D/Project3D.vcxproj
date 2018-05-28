@@ -170,6 +170,7 @@
     <ClCompile Include="OBJMesh.cpp" />
     <ClCompile Include="Project.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
   </ItemGroup>
@@ -180,11 +181,14 @@
     <ClInclude Include="Object.h" />
     <ClInclude Include="OBJMesh.h" />
     <ClInclude Include="Project.h" />
+    <ClInclude Include="RenderTarget.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="tiny_obj_loader.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\bin\shaders\BRDF.frag" />
+    <None Include="..\bin\shaders\BRDF.vert" />
     <None Include="..\bin\shaders\normalmap.frag" />
     <None Include="..\bin\shaders\normalmap.vert" />
     <None Include="..\bin\shaders\phong.frag" />

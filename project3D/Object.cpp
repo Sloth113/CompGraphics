@@ -2,14 +2,20 @@
 
 
 
-Object::Object(glm::mat4 transform)
+Object::Object(glm::mat4 transform, float roughness, float reflectCoef)
 {
 	m_transform = transform;
 	m_shape = nullptr;
 	m_mesh = nullptr;
 	m_texture = nullptr;
+	m_ambLight = vec3(1.0f, 1.0f, 1.0f);
+	m_specPower = 0.5f;
+	m_specular = vec3(0.5f, 0.5f, 0.5f);
+	m_diffuse = vec3(1, 1, 1);
+	m_roughness = roughness;
+	m_reflectionCoef = reflectCoef;
+		
 }
-
 
 Object::~Object()
 {
@@ -34,6 +40,16 @@ bool Object::SetMesh(Mesh * mesh)
 	return true;
 }
 
+float * Object::GetRoughness()
+{
+	return &m_roughness;
+}
+
+float * Object::GetReflection()
+{
+	return &m_reflectionCoef;
+}
+
 bool Object::SetTexture(aie::Texture * texture)
 {
 	m_texture = texture;
@@ -42,7 +58,8 @@ bool Object::SetTexture(aie::Texture * texture)
 
 void Object::Draw(glm::mat4 cameraProjectionView)
 {
-
+	//OLD
+	
 	m_shader->bind();
 	glm::mat4 pvm = cameraProjectionView * m_transform;
 	m_shader->bindUniform("ProjectionViewModel", pvm);
@@ -82,9 +99,10 @@ void Object::Draw(SceneData scene)
 		m_shader->bindUniform("diffuseTexture", 0);
 		m_texture->bind(0);
 	}
-	else if (m_shader->getUniform("diffuseTexture") != -1 ){
-		//m_shader->bindUniform("diffuseTexture", -1);
+	else if (m_shader->getUniform("diffuseTexture") != -1){
+		m_shader->bindUniform("diffuseTexture", 0);
 	}
+
 	if (m_shader->getUniform("specularTexture") != -1 && m_texture != nullptr) {
 
 		m_shader->bindUniform("specularTexture", 0);
@@ -92,7 +110,7 @@ void Object::Draw(SceneData scene)
 		
 	}
 	else if(m_shader->getUniform("specularTexture") != -1 ){
-		//m_shader->bindUniform("specularTexture", -1);
+		m_shader->bindUniform("specularTexture", 0);
 	}
 
 	if (m_shader->getUniform("NormalMatrix") != -1) {
@@ -111,24 +129,35 @@ void Object::Draw(SceneData scene)
 		m_shader->bindUniform("Is", scene.light.specular);
 	}
 
-	if (m_shader->getUniform("Ka") != -1 && m_texture == nullptr) {
-		m_shader->bindUniform("Ka", vec3(1,1,1));
+	if (m_shader->getUniform("Ka") != -1) {
+		m_shader->bindUniform("Ka", m_ambLight);
 	}
-	if (m_shader->getUniform("Kd") != -1 && m_texture == nullptr) {
-		m_shader->bindUniform("Kd", scene.light.diffuse);
+	if (m_shader->getUniform("Kd") != -1 ) {
+		m_shader->bindUniform("Kd", m_diffuse);
 	}
-	if (m_shader->getUniform("Ks") != -1 && m_texture == nullptr) {
-		m_shader->bindUniform("Ks", scene.light.specular);
+	if (m_shader->getUniform("Ks") != -1) {
+		m_shader->bindUniform("Ks", m_specular);
 	}
 	if (m_shader->getUniform("specularPower") != -1) {
-		//m_shader->bindUniform("specularPower", 0.0f); //does nothing??
+		m_shader->bindUniform("specularPower", m_specPower); 
 	}
 	
 	if (m_shader->getUniform("cameraPosition") != -1) {
 		m_shader->bindUniform("cameraPosition", scene.camera->getPosition());
 	}
+
+	if (m_shader->getUniform("roughness") != -1) {
+		m_shader->bindUniform("roughness", m_roughness);
+	}
+	if (m_shader->getUniform("reflectionCoefficient") != -1) {
+		m_shader->bindUniform("reflectionCoefficient", m_reflectionCoef);
+	}
+
+
 	if (m_texture != nullptr) {
 	}
+
+
 
 
 	if (m_shape != nullptr) {
