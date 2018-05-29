@@ -42,12 +42,6 @@ void main() {
 	vec3 R = reflect( -L, N ); 
 	//Surface to viewer
 	vec3 E = V;
-	
-	mat3 TBN = mat3(T,B,N);
-
-	
-	vec3 texNormal = texture( normalTexture, vTexCoord ).rgb;
-	N = TBN * (texNormal * 2 -1); 
 
 	float NdL= max( 0.0f, dot( N, L ) );
 	float NdE = max( 0.0f, dot( N, E ) );
@@ -98,18 +92,12 @@ void main() {
 	// calculate specular term 
 	float specularTerm = CookTorrance; //= pow( max( 0, dot( R, V ) ), specularPower);
 	
-	vec3 diffColour = vec3(1.0, 1.0, 1.0);
-	vec3 specColour = vec3(1.0, 1.0, 1.0);
-	
-
-	diffColour = texture( diffuseTexture, vTexCoord ).rgb;
-	specColour = texture( specularTexture, vTexCoord ).rgb;
 	
 	
 	//Colour?
-	vec3 ambient = Ia * Ka * diffColour;    
-	vec3 diffuse = Id * Kd * lambertTerm * diffColour ;
-	vec3 specular = Is * Ks * specularTerm * specColour;
+	vec3 ambient = Ia * Ka;    
+	vec3 diffuse = Id * Kd * lambertTerm ;
+	vec3 specular = Is * Ks * specularTerm;
 
 	FragColour = vec4( ambient + diffuse + specular, 1) ;
 	//FragColour = vec4(texNormal, 1);

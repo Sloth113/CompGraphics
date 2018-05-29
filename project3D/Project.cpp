@@ -31,7 +31,7 @@ bool Project::startup() {
 	m_myCamera->setPerspective(glm::pi<float>() * 0.25f, getWindowWidth() / (float)getWindowHeight(), 0.1f, 1000.f);
 	m_myCamera->setLookAt(vec3(10), vec3(0), vec3(0, 1, 0));
 
-	m_data.light.direction = { 1,1,1};
+	m_data.light.direction = { 1,-1,-1};
 	m_data.light.diffuse = { 1, 1, 1 };
 	m_data.light.specular = { 1, 1, 1 };
 	m_data.ambLight = { 0.25f, 0.25f, 0.25f };
@@ -132,14 +132,29 @@ bool Project::startup() {
 	if (m_meshs.back()->load("./models/Bunny.obj", true) == false) {
 		return false;
 	}
-	m_meshs.push_back(new aie::OBJMesh());
 	//Soul Spear Textured [1]
+	m_meshs.push_back(new aie::OBJMesh());
 	if (m_meshs.back()->load("./models/soulspear/soulspear.obj", true, true) == false) {
 		return false;
 	}
-	m_meshs.push_back(new aie::OBJMesh());
 	//Dragon [2]
+	m_meshs.push_back(new aie::OBJMesh());
 	if (m_meshs.back()->load("./models/Dragon.obj", true, true) == false) {
+		return false;
+	}
+	//Chair [3] 
+	m_meshs.push_back(new aie::OBJMesh());
+	if (m_meshs.back()->load("./models/chair.obj", true, true) == false) {
+		return false;
+	}	
+	//Buddha [4]
+	m_meshs.push_back(new aie::OBJMesh());
+	if (m_meshs.back()->load("./models/Buddha.obj", true, true) == false) {
+		return false;
+	}
+	//Lucy [5]
+	m_meshs.push_back(new aie::OBJMesh());
+	if (m_meshs.back()->load("./models/Lucy.obj", true, true) == false) {
 		return false;
 	}
 
@@ -191,7 +206,14 @@ bool Project::startup() {
 	if (LoadShader(m_shaders.back(), aie::eShaderStage::FRAGMENT, "./shaders/BRDF.frag") == false) {
 		return false;
 	}
-
+	//BRDF Physical shaders no texture[5]
+	m_shaders.push_back(new aie::ShaderProgram());
+	if (LoadShader(m_shaders.back(), aie::eShaderStage::VERTEX, "./shaders/BRDF.vert") == false) {
+		return false;
+	}
+	if (LoadShader(m_shaders.back(), aie::eShaderStage::FRAGMENT, "./shaders/BRDFNoTexture.frag") == false) {
+		return false;
+	}
 
 
 
@@ -204,13 +226,13 @@ bool Project::startup() {
 		0,0,0,1
 	};
 
-	//bunny
+	//bunny [0]
 	transform = glm::translate(transform, glm::vec3(0, 0, 10));
 	m_scene.push_back(new Object(transform));
-	m_scene.back()->SetShader(m_shaders[3]);
+	m_scene.back()->SetShader(m_shaders[5]);
 	m_scene.back()->SetMesh(m_meshs[0]);
 
-	//Spear
+	//Spear [1]
 	mat4 sprTrans = {
 		1.f,0,0,0,
 		0,1.f,0,0,
@@ -221,7 +243,7 @@ bool Project::startup() {
 	m_scene.back()->SetShader(m_shaders[3]);
 	m_scene.back()->SetMesh(m_meshs[1]);
 
-	//Spear2
+	//Spear [2]
 	mat4 spr2Trans = {
 		1.f,0,0,0,
 		0,1.f,0,0,
@@ -232,7 +254,7 @@ bool Project::startup() {
 	m_scene.back()->SetShader(m_shaders[2]);
 	m_scene.back()->SetMesh(m_meshs[1]);
 
-	//Spear3
+	//Spear [3]
 	mat4 spr3Trans = {
 		1.f,0,0,0,
 		0,1.f,0,0,
@@ -243,7 +265,7 @@ bool Project::startup() {
 	m_scene.back()->SetShader(m_shaders[4]);
 	m_scene.back()->SetMesh(m_meshs[1]);
 
-	//Square
+	//Square [4]
 	mat4 sqrTrans = {
 		10.f,0,0,0,
 		0,10.f,0,0,
@@ -256,12 +278,44 @@ bool Project::startup() {
 	m_scene.back()->SetTexture(m_textures[0]);
 	m_scene.back()->SetShader(m_shaders[3]);
 
-	//Dragon
+	//Dragon [5] 
 	transform = glm::translate(transform, glm::vec3(0, 0, 10));
 	m_scene.push_back(new Object(transform));
 	m_scene.back()->SetMesh(m_meshs[2]);
-	m_scene.back()->SetShader(m_shaders[3]);
-
+	m_scene.back()->SetShader(m_shaders[5]);
+	//Chair
+	mat4 chairTrans = {
+		1,0,0,0,
+		0,1,0,0,
+		0,0,1,0,
+		0,10,0,1
+	};
+	//Doesnt have useable textures//Found online
+	m_scene.push_back(new Object(chairTrans));
+	m_scene.back()->SetMesh(m_meshs[3]);
+	m_scene.back()->SetShader(m_shaders[0]);
+	// Buddha [7]
+	mat4 budTrans = {
+		1,0,0,0,
+		0,1,0,0,
+		0,0,1,0,
+		10,0,0,1
+	};
+	//Doesnt have useable textures//Found online
+	m_scene.push_back(new Object(budTrans));
+	m_scene.back()->SetMesh(m_meshs[4]);
+	m_scene.back()->SetShader(m_shaders[5]);
+	// Lucy [8]
+	mat4 lucyTrans = {
+		1,0,0,0,
+		0,1,0,0,
+		0,0,1,0,
+		-10,0,0,1
+	};
+	//Doesnt have useable textures//Found online
+	m_scene.push_back(new Object(lucyTrans));
+	m_scene.back()->SetMesh(m_meshs[5]);
+	m_scene.back()->SetShader(m_shaders[5]);
 
 
 	return true;
@@ -390,6 +444,30 @@ void Project::draw() {
 	ImGui::SliderFloat("Roughness", (m_scene[3]->GetRoughness()), 0, 1.0f);
 	ImGui::SliderFloat("Reflection", (m_scene[3]->GetReflection()), 0, 1.0f);
 	ImGui::End();
+
+	ImGui::Begin("3D Models");
+	if (ImGui::CollapsingHeader("Bunny")) {
+		ImGui::SliderFloat("RoughnessB1", (m_scene[0]->GetRoughness()), 0, 1.0f);
+		ImGui::SliderFloat("ReflectionB1", (m_scene[0]->GetReflection()), 0, 1.0f);
+
+	}	
+	if (ImGui::CollapsingHeader("Dragon")) {
+		ImGui::SliderFloat("RoughnessD", (m_scene[5]->GetRoughness()), 0, 1.0f);
+		ImGui::SliderFloat("ReflectionD", (m_scene[5]->GetReflection()), 0, 1.0f);
+
+	}	
+	if (ImGui::CollapsingHeader("Buddha")) {
+		ImGui::SliderFloat("RoughnessB2", (m_scene[7]->GetRoughness()), 0, 1.0f);
+		ImGui::SliderFloat("ReflectionB2", (m_scene[7]->GetReflection()), 0, 1.0f);
+
+	}	
+	if (ImGui::CollapsingHeader("Lucy")) {
+		ImGui::SliderFloat("RoughnessL", (m_scene[8]->GetRoughness()), 0, 1.0f);
+		ImGui::SliderFloat("ReflectionL", (m_scene[8]->GetReflection()), 0, 1.0f);
+
+	}
+	ImGui::End();
+
 
 
 
