@@ -31,12 +31,30 @@ bool Project::startup() {
 	m_myCamera->setPerspective(glm::pi<float>() * 0.25f, getWindowWidth() / (float)getWindowHeight(), 0.1f, 1000.f);
 	m_myCamera->setLookAt(vec3(10), vec3(0), vec3(0, 1, 0));
 
-	m_data.light.direction = { 1,-1,-1};
-	m_data.light.diffuse = { 1, 1, 1 };
-	m_data.light.specular = { 1, 1, 1 };
-	m_data.ambLight = { 0.25f, 0.25f, 0.25f };
+	m_data = new SceneData();
+	m_data->direction = new vec3[4];
+	m_data->diffuse = new vec3[4];
+	m_data->specular = new vec3[4];
+	//White
+	m_data->direction[0] = { 1,-1,-1};
+	m_data->diffuse[0] = { 1, 1, 1 };
+	m_data->specular[0] = { 1, 1, 1 };
+	//Red
+	m_data->direction[1] = { -1,0,0 };
+	m_data->diffuse[1] = { 1, 0, 0 };
+	m_data->specular[1] = { 1, 0, 0 };
+	//Blue
+	m_data->direction[2] = { 1,0,0 };
+	m_data->diffuse[2] = { 0, 0, 1 };
+	m_data->specular[2] = { 0, 0, 1 };
+	//Green
+	m_data->direction[3] = { 0,-1,0 };
+	m_data->diffuse[3] = { 0, 1, 0 };
+	m_data->specular[3] = { 0, 1, 0 };
+
+	m_data->ambLight = { 0.25f, 0.25f, 0.25f };
 	
-	m_data.camera = m_myCamera;
+	m_data->camera = m_myCamera;
 	/*printf("Mat\n %f,\t%f,\t%f,\t%f\n%f,\t%f,\t%f,\t%f\n%f,\t%f,\t%f,\t%f\n%f,\t%f,\t%f,\t%f\n",
 		m_myCamera->getWorldTransform()[0][0], m_myCamera->getWorldTransform()[0][1], m_myCamera->getWorldTransform()[0][2], m_myCamera->getWorldTransform()[0][3],
 		m_myCamera->getWorldTransform()[1][0], m_myCamera->getWorldTransform()[1][1], m_myCamera->getWorldTransform()[1][2], m_myCamera->getWorldTransform()[1][3],
@@ -213,6 +231,14 @@ bool Project::startup() {
 	}
 	if (LoadShader(m_shaders.back(), aie::eShaderStage::FRAGMENT, "./shaders/BRDFNoTexture.frag") == false) {
 		return false;
+	}	
+	//BRDF Physical shaders no texture multi lights [6]
+	m_shaders.push_back(new aie::ShaderProgram());
+	if (LoadShader(m_shaders.back(), aie::eShaderStage::VERTEX, "./shaders/BRDF.vert") == false) {
+		return false;
+	}
+	if (LoadShader(m_shaders.back(), aie::eShaderStage::FRAGMENT, "./shaders/BRDFNoTextureLights.frag") == false) {
+		return false;
 	}
 
 
@@ -282,7 +308,7 @@ bool Project::startup() {
 	transform = glm::translate(transform, glm::vec3(0, 0, 10));
 	m_scene.push_back(new Object(transform));
 	m_scene.back()->SetMesh(m_meshs[2]);
-	m_scene.back()->SetShader(m_shaders[5]);
+	m_scene.back()->SetShader(m_shaders[6]);
 	//Chair
 	mat4 chairTrans = {
 		1,0,0,0,
@@ -315,7 +341,7 @@ bool Project::startup() {
 	//Doesnt have useable textures//Found online
 	m_scene.push_back(new Object(lucyTrans));
 	m_scene.back()->SetMesh(m_meshs[5]);
-	m_scene.back()->SetShader(m_shaders[5]);
+	m_scene.back()->SetShader(m_shaders[6]);
 
 
 	return true;
@@ -435,9 +461,31 @@ void Project::draw() {
 	//m_data.camProjectionView = m_myCamera->getProjectionView();
 	
 	ImGui::Begin("Lighting");
-	ImGui::Checkbox("Test", &m_test);
-	ImGui::SliderFloat3("Light", glm::value_ptr(m_data.light.direction), -1, 1);
-	ImGui::ColorEdit3("AmbLight", &(m_data.ambLight.x));
+
+	if (ImGui::CollapsingHeader("Red")) {
+		ImGui::SliderFloat3("Red Dir", glm::value_ptr(m_data->direction[1]), -1, 1);
+		ImGui::ColorEdit3("Red Spec", glm::value_ptr(m_data->specular[1]));
+		ImGui::ColorEdit3("Red Diff", glm::value_ptr(m_data->diffuse[1]));
+
+	}
+	if (ImGui::CollapsingHeader("Green")) {
+		ImGui::SliderFloat3("Green Dir", glm::value_ptr(m_data->direction[2]), -1, 1);
+		ImGui::ColorEdit3("Green Spec", glm::value_ptr(m_data->specular[2]));
+		ImGui::ColorEdit3("Green Diff", glm::value_ptr(m_data->diffuse[2]));
+
+	}
+	if (ImGui::CollapsingHeader("Blue")) {
+		ImGui::SliderFloat3("Blue Dir", glm::value_ptr(m_data->direction[3]), -1, 1);
+		ImGui::ColorEdit3("Blue Spec", glm::value_ptr(m_data->specular[3]));
+		ImGui::ColorEdit3("Blue Diff", glm::value_ptr(m_data->diffuse[3]));
+
+	}
+	if (ImGui::CollapsingHeader("White")) {
+		ImGui::SliderFloat3("White Dir", glm::value_ptr(m_data->direction[0]), -1, 1);
+		ImGui::ColorEdit3("White Spec", glm::value_ptr(m_data->specular[0]));
+		ImGui::ColorEdit3("White Diff", glm::value_ptr(m_data->diffuse[0]));
+	}
+	ImGui::ColorEdit3("AmbLight", &(m_data->ambLight.x));
 	ImGui::End();
 
 	ImGui::Begin("Physical Spear [A8]");

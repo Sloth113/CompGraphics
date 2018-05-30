@@ -115,5 +115,8 @@
     <None Include="..\bin\shaders\BRDFNoTexture.frag">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="..\bin\shaders\BRDFNoTextureLights.frag">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

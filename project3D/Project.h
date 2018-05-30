@@ -37,7 +37,7 @@ protected:
 	std::vector<aie::Texture *> m_textures;
 	std::vector<aie::ShaderProgram *> m_shaders;
 
-	SceneData m_data;
+	SceneData * m_data;
 
 	bool m_test;
 	float m_float;

@@ -88,10 +88,10 @@ void Object::Draw(glm::mat4 cameraProjectionView)
 	}
 }
 
-void Object::Draw(SceneData scene)
+void Object::Draw(SceneData * scene)
 {
 	m_shader->bind();
-	glm::mat4 pvm = scene.camera->getProjectionView() * m_transform;
+	glm::mat4 pvm = scene->camera->getProjectionView() * m_transform;
 	m_shader->bindUniform("ProjectionViewModel", pvm);
 
 	if (m_shader->getUniform("diffuseTexture") != -1 && m_texture != nullptr) {
@@ -116,17 +116,31 @@ void Object::Draw(SceneData scene)
 	if (m_shader->getUniform("NormalMatrix") != -1) {
 		m_shader->bindUniform("NormalMatrix", glm::inverseTranspose(glm::mat3(m_transform)));
 	}
-	if (m_shader->getUniform("LightDirection") != -1) {
-		m_shader->bindUniform("LightDirection", scene.light.direction);
+
+	if (m_shader->getUniform("Ia") != -1) {
+		m_shader->bindUniform("Ia", scene->ambLight);
 	}
-	if (m_shader->getUniform("Ia") != -1){
-		m_shader->bindUniform("Ia", scene.ambLight);
+	//Multilight
+	if (m_shader->getUniform("LightDirections") != -1) {
+		//m_shader->bindUniform("LightDirections",  scene->direction[0]);
+		glUniform3fv(m_shader->getUniform("LightDirections"), 4, &scene->direction[0].x);
+	}
+	if (m_shader->getUniform("Ids") != -1) {
+		glUniform3fv(m_shader->getUniform("Ids"), 4, &scene->diffuse[0].x);
+	}
+	if (m_shader->getUniform("Iss") != -1) {
+		glUniform3fv(m_shader->getUniform("Iss"), 4, &scene->specular[0].x);
+	}
+
+	//Single light
+	if (m_shader->getUniform("LightDirection") != -1) {
+		m_shader->bindUniform("LightDirection", scene->direction[0]);
 	}
 	if (m_shader->getUniform("Id") != -1) {
-		m_shader->bindUniform("Id", scene.light.diffuse);
+		m_shader->bindUniform("Id", scene->diffuse[0]);
 	}
 	if (m_shader->getUniform("Is") != -1) {
-		m_shader->bindUniform("Is", scene.light.specular);
+		m_shader->bindUniform("Is", scene->specular[0]);
 	}
 
 	if (m_shader->getUniform("Ka") != -1) {
@@ -143,7 +157,7 @@ void Object::Draw(SceneData scene)
 	}
 	
 	if (m_shader->getUniform("cameraPosition") != -1) {
-		m_shader->bindUniform("cameraPosition", scene.camera->getPosition());
+		m_shader->bindUniform("cameraPosition", scene->camera->getPosition());
 	}
 
 	if (m_shader->getUniform("roughness") != -1) {

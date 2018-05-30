@@ -4,16 +4,15 @@
 #include "Mesh.h"
 #include "FlyCamera.h"
 
-struct Light {
-	glm::vec3 direction;
-	glm::vec3 diffuse;
-	glm::vec3 specular;
-};
+class SceneData {
+public:
+	glm::vec3 * direction;
+	glm::vec3 * diffuse;
+	glm::vec3 * specular;
 
-struct SceneData {
-	Light light;
 	glm::vec3 ambLight;
 	FlyCamera * camera;
+
 };
 
 class Object
@@ -28,7 +27,7 @@ public:
 	float* GetReflection();
 	bool SetTexture(aie::Texture * texture);
 	void Draw(glm::mat4 cameraProjectionView);
-	void Draw(SceneData scene);
+	void Draw(SceneData * scene);
 
 private:
 	

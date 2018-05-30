@@ -20,6 +20,7 @@ uniform vec3 Kd; // diffuse material colour
 uniform vec3 Ks; // specular material colour 
 uniform float specularPower; // material specular power
 
+
 uniform vec3 Ia; // ambient light colour
 uniform vec3 Id; // diffuse light colour 
 uniform vec3 Is; // specular light colour 

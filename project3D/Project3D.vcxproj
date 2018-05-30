@@ -190,6 +190,7 @@
     <None Include="..\bin\shaders\BRDF.frag" />
     <None Include="..\bin\shaders\BRDF.vert" />
     <None Include="..\bin\shaders\BRDFNoTexture.frag" />
+    <None Include="..\bin\shaders\BRDFNoTextureLights.frag" />
     <None Include="..\bin\shaders\normalmap.frag" />
     <None Include="..\bin\shaders\normalmap.vert" />
     <None Include="..\bin\shaders\phong.frag" />
