@@ -468,16 +468,16 @@ void Project::draw() {
 		ImGui::ColorEdit3("Red Diff", glm::value_ptr(m_data->diffuse[1]));
 
 	}
-	if (ImGui::CollapsingHeader("Green")) {
-		ImGui::SliderFloat3("Green Dir", glm::value_ptr(m_data->direction[2]), -1, 1);
-		ImGui::ColorEdit3("Green Spec", glm::value_ptr(m_data->specular[2]));
-		ImGui::ColorEdit3("Green Diff", glm::value_ptr(m_data->diffuse[2]));
+	if (ImGui::CollapsingHeader("Blue")) {
+		ImGui::SliderFloat3("Blue Dir", glm::value_ptr(m_data->direction[2]), -1, 1);
+		ImGui::ColorEdit3("Blue Spec", glm::value_ptr(m_data->specular[2]));
+		ImGui::ColorEdit3("Blue Diff", glm::value_ptr(m_data->diffuse[2]));
 
 	}
-	if (ImGui::CollapsingHeader("Blue")) {
-		ImGui::SliderFloat3("Blue Dir", glm::value_ptr(m_data->direction[3]), -1, 1);
-		ImGui::ColorEdit3("Blue Spec", glm::value_ptr(m_data->specular[3]));
-		ImGui::ColorEdit3("Blue Diff", glm::value_ptr(m_data->diffuse[3]));
+	if (ImGui::CollapsingHeader("Green")) {
+		ImGui::SliderFloat3("Green Dir", glm::value_ptr(m_data->direction[3]), -1, 1);
+		ImGui::ColorEdit3("Green Spec", glm::value_ptr(m_data->specular[3]));
+		ImGui::ColorEdit3("Green Diff", glm::value_ptr(m_data->diffuse[3]));
 
 	}
 	if (ImGui::CollapsingHeader("White")) {
@@ -516,17 +516,10 @@ void Project::draw() {
 	}
 	ImGui::End();
 
-
-
-
 	for (Object * ob : m_scene) {
-		
-		//ob->Draw(m_myCamera->getProjectionView());
+	
 		ob->Draw(m_data);
-
 	}
-
-
 
 	Gizmos::draw(m_myCamera->getProjectionView());
 	// draw 3D gizmos
